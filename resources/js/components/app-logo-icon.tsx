@@ -2,11 +2,39 @@ import { SVGAttributes } from 'react';
 
 export default function AppLogoIcon(props: SVGAttributes<SVGElement>) {
     return (
-        <svg {...props} viewBox="0 0 40 42" xmlns="http://www.w3.org/2000/svg">
+        <svg {...props} viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+            {/* Libro principal */}
             <path
-                fillRule="evenodd"
-                clipRule="evenodd"
-                d="M17.2 5.63325L8.6 0.855469L0 5.63325V32.1434L16.2 41.1434L32.4 32.1434V23.699L40 19.4767V9.85547L31.4 5.07769L22.8 9.85547V18.2999L17.2 21.411V5.63325ZM38 18.2999L32.4 21.411V15.2545L38 12.1434V18.2999ZM36.9409 10.4439L31.4 13.5221L25.8591 10.4439L31.4 7.36561L36.9409 10.4439ZM24.8 18.2999V12.1434L30.4 15.2545V21.411L24.8 18.2999ZM23.8 20.0323L29.3409 23.1105L16.2 30.411L10.6591 27.3328L23.8 20.0323ZM7.6 27.9212L15.2 32.1434V38.2999L2 30.9666V7.92116L7.6 11.0323V27.9212ZM8.6 9.29991L3.05913 6.22165L8.6 3.14339L14.1409 6.22165L8.6 9.29991ZM30.4 24.8101L17.2 32.1434V38.2999L30.4 30.9666V24.8101ZM9.6 11.0323L15.2 7.92117V22.5221L9.6 25.6333V11.0323Z"
+                d="M4 4C4 3.44772 4.44772 3 5 3H19C19.5523 3 20 3.44772 20 4V20C20 20.5523 19.5523 21 19 21H5C4.44772 21 4 20.5523 4 20V4Z"
+                fill="currentColor"
+            />
+            {/* Páginas del libro */}
+            <path
+                d="M6 6C6 5.44772 6.44772 5 7 5H17C17.5523 5 18 5.44772 18 6V18C18 18.5523 17.5523 19 17 19H7C6.44772 19 6 18.5523 6 18V6Z"
+                fill="white"
+                fillOpacity="0.9"
+            />
+            {/* Líneas de texto */}
+            <path
+                d="M8 8H16V9H8V8Z"
+                fill="currentColor"
+                fillOpacity="0.3"
+            />
+            <path
+                d="M8 11H14V12H8V11Z"
+                fill="currentColor"
+                fillOpacity="0.3"
+            />
+            <path
+                d="M8 14H16V15H8V14Z"
+                fill="currentColor"
+                fillOpacity="0.3"
+            />
+            {/* Lomo del libro */}
+            <path
+                d="M19 4V20C19 20.5523 18.5523 21 18 21H19C19.5523 21 20 20.5523 20 20V4C20 3.44772 19.5523 3 19 3H18C18.5523 3 19 3.44772 19 4Z"
+                fill="currentColor"
+                fillOpacity="0.7"
             />
         </svg>
     );
