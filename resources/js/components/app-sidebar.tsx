@@ -4,6 +4,7 @@ import { NavUser } from '@/components/nav-user';
 import { Sidebar, SidebarContent, SidebarFooter, SidebarHeader, SidebarMenu, SidebarMenuButton, SidebarMenuItem } from '@/components/ui/sidebar';
 import { type NavItem } from '@/types';
 import { Link } from '@inertiajs/react';
+<<<<<<< HEAD
 import { BookOpen, Folder, LayoutGrid, Plus, Search, Users, Filter, BookMarked, Settings, Building } from 'lucide-react';
 import AppLogo from './app-logo';
 
@@ -44,7 +45,6 @@ const libraryNavItems: NavItem[] = [
 ];
 
 const footerNavItems: NavItem[] = [];
-
 export function AppSidebar() {
     return (
         <Sidebar collapsible="icon" variant="inset">
