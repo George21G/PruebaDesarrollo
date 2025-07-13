@@ -36,6 +36,7 @@ export default function Login({ status, canResetPassword }: LoginProps) {
         });
     };
 
+    return (
         <div className="min-h-screen bg-gradient-to-br from-blue-950 via-blue-900 to-indigo-950">
             <Head title="Iniciar Sesión" />
             
