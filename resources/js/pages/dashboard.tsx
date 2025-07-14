@@ -14,6 +14,7 @@ import {
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import AppLayout from '@/layouts/app-layout';
 import { type BreadcrumbItem } from '@/types';
+import { PieChart, Pie, Cell, BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, Legend, ResponsiveContainer } from 'recharts';
 
 const breadcrumbs: BreadcrumbItem[] = [
     {
@@ -22,7 +23,41 @@ const breadcrumbs: BreadcrumbItem[] = [
     },
 ];
 
-export default function Dashboard() {
+interface DashboardProps {
+    total_libros: number;
+    libros_disponibles: number;
+    total_usuarios: number;
+    prestamos_activos: number;
+    prestamos_vencidos: number;
+    total_entidades: number;
+    entidades_por_tipo: {
+        colegios: number;
+        universidades: number;
+        empresas: number;
+        naturales: number;
+    };
+    libros_por_categoria: Array<{name: string, value: number}>;
+    usuarios_por_tipo: Array<{name: string, value: number}>;
+    entidades_por_tipo: Array<{name: string, value: number}>;
+    prestamos_por_estado: Array<{name: string, value: number}>;
+}
+
+export default function Dashboard({ 
+    total_libros, 
+    libros_disponibles, 
+    total_usuarios, 
+    prestamos_activos, 
+    prestamos_vencidos,
+    total_entidades,
+    entidades_por_tipo,
+    libros_por_categoria,
+    usuarios_por_tipo,
+    entidades_por_tipo: entidadesChart,
+    prestamos_por_estado
+}: DashboardProps) {
+    // Colores para las gráficas
+    const COLORS = ['#0088FE', '#00C49F', '#FFBB28', '#FF8042', '#8884D8', '#82CA9D'];
+
     return (
         <AppLayout breadcrumbs={breadcrumbs}>
             <Head title="Dashboard - Gestión de Inventario" />
@@ -55,10 +90,10 @@ export default function Dashboard() {
                             <BookOpen className="h-4 w-4 text-blue-400" />
                         </CardHeader>
                         <CardContent>
-                            <div className="text-2xl font-bold text-white">0</div>
+                            <div className="text-2xl font-bold text-white">{total_libros}</div>
                             <p className="text-xs text-gray-400 flex items-center mt-1">
                                 <TrendingUp className="h-3 w-3 mr-1" />
-                                Sin datos disponibles
+                                {total_libros > 0 ? `${libros_disponibles} disponibles` : 'Sin libros registrados'}
                             </p>
                         </CardContent>
                     </Card>
@@ -71,10 +106,10 @@ export default function Dashboard() {
                             <BookMarked className="h-4 w-4 text-orange-400" />
                         </CardHeader>
                         <CardContent>
-                            <div className="text-2xl font-bold text-white">0</div>
+                            <div className="text-2xl font-bold text-white">{prestamos_activos}</div>
                             <p className="text-xs text-gray-400 flex items-center mt-1">
                                 <Clock className="h-3 w-3 mr-1" />
-                                Sin préstamos activos
+                                {prestamos_activos > 0 ? `${prestamos_vencidos} vencidos` : 'Sin préstamos activos'}
                             </p>
                         </CardContent>
                     </Card>
@@ -87,10 +122,10 @@ export default function Dashboard() {
                             <Users className="h-4 w-4 text-green-400" />
                         </CardHeader>
                         <CardContent>
-                            <div className="text-2xl font-bold text-white">0</div>
+                            <div className="text-2xl font-bold text-white">{total_usuarios}</div>
                             <p className="text-xs text-gray-400 flex items-center mt-1">
                                 <Activity className="h-3 w-3 mr-1" />
-                                Sin usuarios registrados
+                                {total_usuarios > 0 ? 'Usuarios registrados' : 'Sin usuarios registrados'}
                             </p>
                         </CardContent>
                     </Card>
@@ -98,40 +133,210 @@ export default function Dashboard() {
                     <Card className="bg-black/40 border-gray-800 backdrop-blur-sm">
                         <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
                             <CardTitle className="text-sm font-medium text-gray-300">
-                                Instituciones
+                                Entidades
                             </CardTitle>
                             <Building className="h-4 w-4 text-purple-400" />
                         </CardHeader>
                         <CardContent>
-                            <div className="text-2xl font-bold text-white">0</div>
+                            <div className="text-2xl font-bold text-white">{total_entidades}</div>
                             <p className="text-xs text-gray-400 flex items-center mt-1">
                                 <Building className="h-3 w-3 mr-1" />
-                                Sin instituciones registradas
+                                {total_entidades > 0 ? 
+                                    `${entidades_por_tipo.colegios + entidades_por_tipo.universidades + entidades_por_tipo.empresas + entidades_por_tipo.naturales} activas` : 
+                                    'Sin entidades registradas'
+                                }
                             </p>
                         </CardContent>
                     </Card>
                 </div>
 
-                {/* Activity Section */}
+                {/* Charts Section */}
                 <div className="grid grid-cols-1 gap-6 lg:grid-cols-2">
+                    {/* Libros por Categoría */}
                     <Card className="bg-black/40 border-gray-800 backdrop-blur-sm">
                         <CardHeader>
-                            <CardTitle className="text-white">Actividad Reciente</CardTitle>
+                            <CardTitle className="text-white flex items-center gap-2">
+                                <BarChart3 className="h-5 w-5" />
+                                Libros por Categoría
+                            </CardTitle>
                             <CardDescription className="text-gray-400">
-                                Últimas transacciones del sistema
+                                Distribución de libros por categoría
                             </CardDescription>
                         </CardHeader>
                         <CardContent>
-                            <div className="flex items-center justify-center p-8">
-                                <div className="text-center">
-                                    <BookOpen className="h-12 w-12 text-gray-600 mx-auto mb-4" />
-                                    <p className="text-gray-400 text-sm">Sin actividad reciente</p>
-                                    <p className="text-gray-500 text-xs">Los eventos aparecerán aquí</p>
+                            {libros_por_categoria.length > 0 ? (
+                                <ResponsiveContainer width="100%" height={300}>
+                                    <PieChart>
+                                        <Pie
+                                            data={libros_por_categoria}
+                                            cx="50%"
+                                            cy="50%"
+                                            labelLine={false}
+                                            label={({ name, percent }) => `${name} ${(percent * 100).toFixed(0)}%`}
+                                            outerRadius={80}
+                                            fill="#8884d8"
+                                            dataKey="value"
+                                        >
+                                            {libros_por_categoria.map((entry, index) => (
+                                                <Cell key={`cell-${index}`} fill={COLORS[index % COLORS.length]} />
+                                            ))}
+                                        </Pie>
+                                        <Tooltip 
+                                            contentStyle={{ 
+                                                backgroundColor: '#1f2937', 
+                                                border: '1px solid #374151',
+                                                borderRadius: '8px',
+                                                color: '#f9fafb'
+                                            }}
+                                        />
+                                    </PieChart>
+                                </ResponsiveContainer>
+                            ) : (
+                                <div className="flex items-center justify-center h-48">
+                                    <p className="text-gray-400">No hay datos disponibles</p>
                                 </div>
-                            </div>
+                            )}
                         </CardContent>
                     </Card>
 
+                    {/* Usuarios por Tipo */}
+                    <Card className="bg-black/40 border-gray-800 backdrop-blur-sm">
+                        <CardHeader>
+                            <CardTitle className="text-white flex items-center gap-2">
+                                <Users className="h-5 w-5" />
+                                Usuarios por Tipo
+                            </CardTitle>
+                            <CardDescription className="text-gray-400">
+                                Distribución de usuarios por tipo
+                            </CardDescription>
+                        </CardHeader>
+                        <CardContent>
+                            {usuarios_por_tipo.length > 0 ? (
+                                <ResponsiveContainer width="100%" height={300}>
+                                    <BarChart data={usuarios_por_tipo}>
+                                        <CartesianGrid strokeDasharray="3 3" stroke="#374151" />
+                                        <XAxis 
+                                            dataKey="name" 
+                                            stroke="#9ca3af"
+                                            fontSize={12}
+                                        />
+                                        <YAxis 
+                                            stroke="#9ca3af"
+                                            fontSize={12}
+                                        />
+                                        <Tooltip 
+                                            contentStyle={{ 
+                                                backgroundColor: '#1f2937', 
+                                                border: '1px solid #374151',
+                                                borderRadius: '8px',
+                                                color: '#f9fafb'
+                                            }}
+                                        />
+                                        <Bar dataKey="value" fill="#3b82f6" />
+                                    </BarChart>
+                                </ResponsiveContainer>
+                            ) : (
+                                <div className="flex items-center justify-center h-48">
+                                    <p className="text-gray-400">No hay datos disponibles</p>
+                                </div>
+                            )}
+                        </CardContent>
+                    </Card>
+
+                    {/* Entidades por Tipo */}
+                    <Card className="bg-black/40 border-gray-800 backdrop-blur-sm">
+                        <CardHeader>
+                            <CardTitle className="text-white flex items-center gap-2">
+                                <Building className="h-5 w-5" />
+                                Entidades por Tipo
+                            </CardTitle>
+                            <CardDescription className="text-gray-400">
+                                Distribución de entidades por tipo
+                            </CardDescription>
+                        </CardHeader>
+                        <CardContent>
+                            {entidadesChart.length > 0 ? (
+                                <ResponsiveContainer width="100%" height={300}>
+                                    <PieChart>
+                                        <Pie
+                                            data={entidadesChart}
+                                            cx="50%"
+                                            cy="50%"
+                                            labelLine={false}
+                                            label={({ name, percent }) => `${name} ${(percent * 100).toFixed(0)}%`}
+                                            outerRadius={80}
+                                            fill="#8884d8"
+                                            dataKey="value"
+                                        >
+                                            {entidadesChart.map((entry, index) => (
+                                                <Cell key={`cell-${index}`} fill={COLORS[index % COLORS.length]} />
+                                            ))}
+                                        </Pie>
+                                        <Tooltip 
+                                            contentStyle={{ 
+                                                backgroundColor: '#1f2937', 
+                                                border: '1px solid #374151',
+                                                borderRadius: '8px',
+                                                color: '#f9fafb'
+                                            }}
+                                        />
+                                    </PieChart>
+                                </ResponsiveContainer>
+                            ) : (
+                                <div className="flex items-center justify-center h-48">
+                                    <p className="text-gray-400">No hay datos disponibles</p>
+                                </div>
+                            )}
+                        </CardContent>
+                    </Card>
+
+                    {/* Préstamos por Estado */}
+                    <Card className="bg-black/40 border-gray-800 backdrop-blur-sm">
+                        <CardHeader>
+                            <CardTitle className="text-white flex items-center gap-2">
+                                <BookMarked className="h-5 w-5" />
+                                Préstamos por Estado
+                            </CardTitle>
+                            <CardDescription className="text-gray-400">
+                                Distribución de préstamos por estado
+                            </CardDescription>
+                        </CardHeader>
+                        <CardContent>
+                            {prestamos_por_estado.length > 0 ? (
+                                <ResponsiveContainer width="100%" height={300}>
+                                    <BarChart data={prestamos_por_estado}>
+                                        <CartesianGrid strokeDasharray="3 3" stroke="#374151" />
+                                        <XAxis 
+                                            dataKey="name" 
+                                            stroke="#9ca3af"
+                                            fontSize={12}
+                                        />
+                                        <YAxis 
+                                            stroke="#9ca3af"
+                                            fontSize={12}
+                                        />
+                                        <Tooltip 
+                                            contentStyle={{ 
+                                                backgroundColor: '#1f2937', 
+                                                border: '1px solid #374151',
+                                                borderRadius: '8px',
+                                                color: '#f9fafb'
+                                            }}
+                                        />
+                                        <Bar dataKey="value" fill="#f59e0b" />
+                                    </BarChart>
+                                </ResponsiveContainer>
+                            ) : (
+                                <div className="flex items-center justify-center h-48">
+                                    <p className="text-gray-400">No hay datos disponibles</p>
+                                </div>
+                            )}
+                        </CardContent>
+                    </Card>
+                </div>
+
+                {/* Conditions Section */}
+                <div className="grid grid-cols-1 gap-6">
                     <Card className="bg-black/40 border-gray-800 backdrop-blur-sm">
                         <CardHeader>
                             <CardTitle className="text-white">Condiciones de Préstamo</CardTitle>
@@ -140,7 +345,7 @@ export default function Dashboard() {
                             </CardDescription>
                         </CardHeader>
                         <CardContent>
-                            <div className="space-y-4">
+                            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
                                 <div className="flex items-center justify-between p-3 rounded-lg bg-gray-800/50">
                                     <div className="flex items-center space-x-3">
                                         <Clock className="h-5 w-5 text-blue-400" />
@@ -160,7 +365,7 @@ export default function Dashboard() {
                                         <AlertCircle className="h-5 w-5 text-red-400" />
                                         <span className="text-gray-300">Multa por retraso</span>
                                     </div>
-                                    <span className="text-sm font-medium text-white">$1/día</span>
+                                    <span className="text-sm font-medium text-white">$2.000/día</span>
                                 </div>
                                 <div className="flex items-center justify-between p-3 rounded-lg bg-gray-800/50">
                                     <div className="flex items-center space-x-3">
@@ -168,131 +373,6 @@ export default function Dashboard() {
                                         <span className="text-gray-300">Renovaciones</span>
                                     </div>
                                     <span className="text-sm font-medium text-white">1 vez</span>
-                                </div>
-                            </div>
-                        </CardContent>
-                    </Card>
-                </div>
-
-                {/* Charts Section */}
-                <div className="grid grid-cols-1 gap-6 lg:grid-cols-2">
-                    <Card className="bg-black/40 border-gray-800 backdrop-blur-sm">
-                        <CardHeader>
-                            <CardTitle className="text-white">Categorías Populares</CardTitle>
-                            <CardDescription className="text-gray-400">
-                                Libros más solicitados por categoría
-                            </CardDescription>
-                        </CardHeader>
-                        <CardContent>
-                            <div className="space-y-4">
-                                <div className="flex items-center justify-between">
-                                    <span className="text-gray-300">Ficción</span>
-                                    <div className="flex items-center space-x-2">
-                                        <div className="w-32 bg-gray-700 rounded-full h-2">
-                                            <div className="bg-blue-500 h-2 rounded-full" style={{ width: '75%' }}></div>
-                                        </div>
-                                        <span className="text-sm text-gray-400">75%</span>
-                                    </div>
-                                </div>
-                                <div className="flex items-center justify-between">
-                                    <span className="text-gray-300">Ciencia</span>
-                                    <div className="flex items-center space-x-2">
-                                        <div className="w-32 bg-gray-700 rounded-full h-2">
-                                            <div className="bg-green-500 h-2 rounded-full" style={{ width: '60%' }}></div>
-                                        </div>
-                                        <span className="text-sm text-gray-400">60%</span>
-                                    </div>
-                                </div>
-                                <div className="flex items-center justify-between">
-                                    <span className="text-gray-300">Historia</span>
-                                    <div className="flex items-center space-x-2">
-                                        <div className="w-32 bg-gray-700 rounded-full h-2">
-                                            <div className="bg-purple-500 h-2 rounded-full" style={{ width: '45%' }}></div>
-                                        </div>
-                                        <span className="text-sm text-gray-400">45%</span>
-                                    </div>
-                                </div>
-                                <div className="flex items-center justify-between">
-                                    <span className="text-gray-300">Tecnología</span>
-                                    <div className="flex items-center space-x-2">
-                                        <div className="w-32 bg-gray-700 rounded-full h-2">
-                                            <div className="bg-orange-500 h-2 rounded-full" style={{ width: '30%' }}></div>
-                                        </div>
-                                        <span className="text-sm text-gray-400">30%</span>
-                                    </div>
-                                </div>
-                                <div className="flex items-center justify-between">
-                                    <span className="text-gray-300">Filosofía</span>
-                                    <div className="flex items-center space-x-2">
-                                        <div className="w-32 bg-gray-700 rounded-full h-2">
-                                            <div className="bg-pink-500 h-2 rounded-full" style={{ width: '20%' }}></div>
-                                        </div>
-                                        <span className="text-sm text-gray-400">20%</span>
-                                    </div>
-                                </div>
-                                <div className="flex items-center justify-between">
-                                    <span className="text-gray-300">Arte</span>
-                                    <div className="flex items-center space-x-2">
-                                        <div className="w-32 bg-gray-700 rounded-full h-2">
-                                            <div className="bg-cyan-500 h-2 rounded-full" style={{ width: '15%' }}></div>
-                                        </div>
-                                        <span className="text-sm text-gray-400">15%</span>
-                                    </div>
-                                </div>
-                            </div>
-                        </CardContent>
-                    </Card>
-
-                    <Card className="bg-black/40 border-gray-800 backdrop-blur-sm">
-                        <CardHeader>
-                            <CardTitle className="text-white">Resumen del Sistema</CardTitle>
-                            <CardDescription className="text-gray-400">
-                                Estado general del inventario
-                            </CardDescription>
-                        </CardHeader>
-                        <CardContent>
-                            <div className="space-y-4">
-                                <div className="flex items-center justify-between p-3 rounded-lg bg-gray-800/50">
-                                    <div className="flex items-center space-x-3">
-                                        <BookOpen className="h-5 w-5 text-blue-400" />
-                                        <span className="text-gray-300">Libros en inventario</span>
-                                    </div>
-                                    <span className="text-sm font-medium text-white">0</span>
-                                </div>
-                                <div className="flex items-center justify-between p-3 rounded-lg bg-gray-800/50">
-                                    <div className="flex items-center space-x-3">
-                                        <BookMarked className="h-5 w-5 text-orange-400" />
-                                        <span className="text-gray-300">Préstamos activos</span>
-                                    </div>
-                                    <span className="text-sm font-medium text-white">0</span>
-                                </div>
-                                <div className="flex items-center justify-between p-3 rounded-lg bg-gray-800/50">
-                                    <div className="flex items-center space-x-3">
-                                        <Users className="h-5 w-5 text-green-400" />
-                                        <span className="text-gray-300">Usuarios registrados</span>
-                                    </div>
-                                    <span className="text-sm font-medium text-white">0</span>
-                                </div>
-                            </div>
-                        </CardContent>
-                    </Card>
-                </div>
-
-                {/* Institutions Section */}
-                <div className="grid grid-cols-1 gap-6">
-                    <Card className="bg-black/40 border-gray-800 backdrop-blur-sm">
-                        <CardHeader>
-                            <CardTitle className="text-white">Instituciones Registradas</CardTitle>
-                            <CardDescription className="text-gray-400">
-                                Lista de instituciones afiliadas al sistema
-                            </CardDescription>
-                        </CardHeader>
-                        <CardContent>
-                            <div className="flex items-center justify-center p-8">
-                                <div className="text-center">
-                                    <Building className="h-12 w-12 text-gray-600 mx-auto mb-4" />
-                                    <p className="text-gray-400 text-sm">Sin instituciones registradas</p>
-                                    <p className="text-gray-500 text-xs">Las instituciones aparecerán aquí</p>
                                 </div>
                             </div>
                         </CardContent>
