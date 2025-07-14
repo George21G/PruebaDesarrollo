@@ -14,14 +14,14 @@ return new class extends Migration
         Schema::create('usuarios_biblioteca', function (Blueprint $table) {
             $table->id();
             $table->foreignId('user_id')->constrained()->onDelete('cascade');
-            $table->foreignId('entidad_id')->constrained()->onDelete('cascade');
+            $table->foreignId('entidad_id')->constrained('entidades')->onDelete('cascade');
             $table->string('codigo_usuario')->unique();
             $table->string('nombre');
             $table->string('apellido');
             $table->string('email')->unique();
             $table->string('telefono')->nullable();
             $table->string('direccion')->nullable();
-            $table->enum('tipo_usuario', ['estudiante', 'empleado', 'natural',]);
+            $table->enum('tipo_usuario', ['colegio', 'universidad', 'empresa']);
             $table->enum('estado', ['activo', 'inactivo', 'suspendido'])->default('activo');
             $table->timestamps();
         });
