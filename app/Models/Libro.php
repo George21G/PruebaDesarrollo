@@ -21,7 +21,6 @@ class Libro extends Model
     ];
 
     protected $casts = [
-        'anio_publicacion' => 'integer',
         'cantidad_total' => 'integer',
         'cantidad_disponible' => 'integer',
         'estado' => 'string'

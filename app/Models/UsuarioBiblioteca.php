@@ -8,6 +8,8 @@ use Illuminate\Database\Eloquent\Relations\HasMany;
 
 class UsuarioBiblioteca extends Model
 {
+    protected $table = 'usuarios_biblioteca';
+    
     protected $fillable = [
         'user_id',
         'entidad_id',
@@ -26,6 +28,11 @@ class UsuarioBiblioteca extends Model
         'estado' => 'string'
     ];
 
+    /**
+     * Tipos de usuario permitidos
+     */
+    const TIPOS = ['colegio', 'universidad', 'empresa'];
+
     public function user(): BelongsTo
     {
         return $this->belongsTo(User::class);
@@ -33,12 +40,18 @@ class UsuarioBiblioteca extends Model
 
     public function entidad(): BelongsTo
     {
-        return $this->belongsTo(Entidad::class);
+        return $this->belongsTo(Entidad::class, 'entidad_id', 'id');
     }
 
     public function prestamos(): HasMany
     {
-        return $this->hasMany(Prestamo::class, 'user_id', 'user_id');
+        // Relación por usuario_biblioteca_id
+        return $this->hasMany(Prestamo::class, 'usuario_biblioteca_id', 'id');
+    }
+
+    public function esPersonaNatural(): bool
+    {
+        return $this->tipo_usuario === 'natural';
     }
 
     public function scopeActivo($query)

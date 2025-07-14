@@ -7,6 +7,8 @@ use Illuminate\Database\Eloquent\Relations\HasMany;
 
 class Entidad extends Model
 {
+    protected $table = 'entidades';
+
     protected $fillable = [
         'nombre',
         'descripcion',
@@ -14,6 +16,7 @@ class Entidad extends Model
         'direccion',
         'telefono',
         'email',
+        'responsable',
         'estado'
     ];
 
