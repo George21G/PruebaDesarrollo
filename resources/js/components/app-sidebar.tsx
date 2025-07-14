@@ -4,7 +4,6 @@ import { NavUser } from '@/components/nav-user';
 import { Sidebar, SidebarContent, SidebarFooter, SidebarHeader, SidebarMenu, SidebarMenuButton, SidebarMenuItem } from '@/components/ui/sidebar';
 import { type NavItem } from '@/types';
 import { Link } from '@inertiajs/react';
-<<<<<<< HEAD
 import { BookOpen, Folder, LayoutGrid, Plus, Search, Users, Filter, BookMarked, Settings, Building } from 'lucide-react';
 import AppLogo from './app-logo';
 
@@ -24,7 +23,7 @@ const libraryNavItems: NavItem[] = [
     },
     {
         title: 'Buscar Libros',
-        href: '/books/search',
+        href: '/books',
         icon: Search,
     },
     {
@@ -38,7 +37,7 @@ const libraryNavItems: NavItem[] = [
         icon: BookMarked,
     },
     {
-        title: 'Instituciones',
+        title: 'Entidades', // Cambiado de 'Instituciones' a 'Entidades'
         href: '/institutions',
         icon: Building,
     },
