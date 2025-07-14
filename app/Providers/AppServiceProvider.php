@@ -19,6 +19,7 @@ class AppServiceProvider extends ServiceProvider
      */
     public function boot(): void
     {
-        //
+        // Configurar model binding para usuarios
+        \Route::model('user', \App\Models\UsuarioBiblioteca::class);
     }
 }
