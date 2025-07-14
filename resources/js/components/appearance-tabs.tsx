@@ -32,4 +32,3 @@ export default function AppearanceToggleTab({ className = '', ...props }: HTMLAt
         </div>
     );
 }
-}
