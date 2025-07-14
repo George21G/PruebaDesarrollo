@@ -15,7 +15,7 @@ return new class extends Migration
             $table->id();
             $table->string('nombre');
             $table->text('descripcion')->nullable();
-            $table->enum('tipo', ['colegio', 'universidad', 'empresa']);
+            $table->enum('tipo', ['colegio', 'universidad', 'empresa', 'natural']);
             $table->string('direccion')->nullable();
             $table->string('telefono')->nullable();
             $table->string('email')->nullable();
